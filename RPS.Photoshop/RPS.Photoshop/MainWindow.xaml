@@ -1,4 +1,13 @@
-﻿<Controls:MetroWindow x:Class="RPS.Photoshop.MainWindow"
+﻿<!--<Controls:MetroWindow x:Class="RPS.Photoshop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RPS.Photoshop"
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+        mc:Ignorable="d" FontSize="18"
+        Title="Tenaga Nasional Berhad" Height="450" Width="800">-->
+<Controls:MetroWindow x:Class="RPS.Photoshop.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -10,6 +19,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="auto"/>
@@ -32,16 +42,22 @@
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="4" TextAlignment="Center" Text="Khairil App"></TextBlock>
+        <TextBlock Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="5" TextAlignment="Center" Text="Khairil App - Vehicle Plate Auto Cover"></TextBlock>
 
         <TextBlock Grid.Row="2" Grid.Column="1" Text="Source Folder: "/>
-        <TextBox x:Name="txtSource" Grid.Row="2" Grid.Column="2" Width="500" Margin="20,5"/>
+        <TextBox x:Name="txtSource" Grid.Row="2" Grid.Column="2" Width="400" Margin="20,5" Text="C:\\A_SampleFolder\trafficjam_before.jpg"/>
 
         <TextBlock Grid.Row="3" Grid.Column="1"  Text="Target Folder: "/>
-        <TextBox x:Name="txtTarget" Grid.Row="3" Grid.Column="2"  Width="500" Margin="20,5"></TextBox>
-        <Button x:Name="btnStart" Grid.Row="4" Grid.Column="2" Width="100" Margin="0,5"
-                Content="Run Me" Click="btnStart_Click"/>
+        <TextBox x:Name="txtTarget" Grid.Row="3" Grid.Column="2"  Width="400" Margin="20,5" Text="C:\\A_SampleFolder\trafficjam_after.jpg" />
+        <Button x:Name="btnStart" Grid.Row="4" Grid.Column="2" Height="40" Width="400"
+                Content="Run Me" Click="BtnStart_Click"/>
 
-        <TextBlock x:Name="lblMessage" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="4"/>
+        <TextBlock x:Name="lblMessage" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,5"/>
+
+        <Image x:Name="imgBefore" Grid.Row="6" Grid.Column="1" Source="C:\\A_SampleFolder\\trafficjam_before.jpg" MaxWidth="300"/>
+        <TextBlock Grid.Row="7" Grid.Column="1" Text="BEFORE" HorizontalAlignment="Center"/>
+
+        <Image x:Name="imgAfter" Grid.Row="6" Grid.Column="2" Source="C:\\A_SampleFolder\\trafficjam_after.jpg" MaxWidth="300"/>
+        <TextBlock Grid.Row="7" Grid.Column="2" Text="AFTER" HorizontalAlignment="Center"/>
     </Grid>
 </Controls:MetroWindow>

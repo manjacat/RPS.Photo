@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MahApps.Metro.Controls;
+using RPS.Images;
 
 namespace RPS.Photoshop
 {
@@ -24,12 +25,36 @@ namespace RPS.Photoshop
         public MainWindow()
         {
             InitializeComponent();
-            btnStart.IsEnabled = true;
+            lblMessage.Text = "Successfully run with no errors";
+            //MessageBox.Show("Hello");
         }
 
-        private void btnStart_Click(object sender, RoutedEventArgs e)
+        private void BtnStart_Click(object sender, RoutedEventArgs e)
         {
+            
             lblMessage.Text = "Button is clicked";
+            Test();
+        }
+
+        private void Test()
+        {
+            //TODO
+            try
+            {
+                ImageHelper.TestMasking();
+                lblMessage.Text = "Completed";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                lblMessage.Text = ex.ToString();
+            }
+            
+        }
+
+        private void btnStart_Click_1(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Hello World");
         }
     }
 }
