@@ -14,6 +14,9 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MahApps.Metro.Controls;
 using RPS.Images;
+//for select directory dialog
+using System.Windows.Forms;
+using System.IO;
 
 namespace RPS.Photoshop
 {
@@ -30,8 +33,7 @@ namespace RPS.Photoshop
         }
 
         private void BtnStart_Click(object sender, RoutedEventArgs e)
-        {
-            
+        {  
             lblMessage.Text = "Button is clicked";
             Test();
         }
@@ -46,7 +48,7 @@ namespace RPS.Photoshop
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                System.Windows.MessageBox.Show(ex.Message);
                 lblMessage.Text = ex.ToString();
             }
             
@@ -54,7 +56,52 @@ namespace RPS.Photoshop
 
         private void btnStart_Click_1(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Hello World");
+            System.Windows.MessageBox.Show("Hello World");
+        }
+
+        private void btnFileDialog2_Click(object sender, RoutedEventArgs e)
+        {
+            using (var fbd = new FolderBrowserDialog())
+            {
+                DialogResult result = fbd.ShowDialog();
+
+                if (!string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                {
+                    txtTarget.Text = fbd.SelectedPath;
+                    CheckIfSourceAndTargetIsSame();
+                }
+            }
+        }
+
+        private void btnFileDialog1_Click(object sender, RoutedEventArgs e)
+        {
+            using (var fbd = new FolderBrowserDialog())
+            {
+                DialogResult result = fbd.ShowDialog();
+
+                if (!string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                {
+                    string[] files = Directory.GetFiles(fbd.SelectedPath);
+                    System.Windows.Forms.MessageBox.Show("Files found: " + files.Length.ToString(), "Message");
+                    txtSource.Text = fbd.SelectedPath;
+                    CheckIfSourceAndTargetIsSame();
+                }
+            }
+        }
+
+        private void CheckIfSourceAndTargetIsSame()
+        {
+            if(txtSource.Text == txtTarget.Text)
+            {
+                lblMessage.Text = "Source and Target cannot be the same";
+                lblMessage.Foreground = Brushes.Red;
+            }
+            else
+            {
+                lblMessage.Text = string.Empty;
+                lblMessage.Foreground = Brushes.Black;
+            }
+
         }
     }
 }

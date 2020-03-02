@@ -45,19 +45,24 @@
         <TextBlock Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="5" TextAlignment="Center" Text="Khairil App - Vehicle Plate Auto Cover"></TextBlock>
 
         <TextBlock Grid.Row="2" Grid.Column="1" Text="Source Folder: "/>
-        <TextBox x:Name="txtSource" Grid.Row="2" Grid.Column="2" Width="400" Margin="20,5" Text="C:\\A_SampleFolder\trafficjam_before.jpg"/>
+        <TextBox x:Name="txtSource" Grid.Row="2" Grid.Column="2" Width="300" Margin="20,5" Text="C:\\A_SampleFolder\trafficjam_before.jpg"/>
+        <Button x:Name="btnFileDialog1" Grid.Row="2" Grid.Column="3" Margin="5,5"
+                Content="Browse" Click="btnFileDialog1_Click"/>
 
         <TextBlock Grid.Row="3" Grid.Column="1"  Text="Target Folder: "/>
-        <TextBox x:Name="txtTarget" Grid.Row="3" Grid.Column="2"  Width="400" Margin="20,5" Text="C:\\A_SampleFolder\trafficjam_after.jpg" />
+        <TextBox x:Name="txtTarget" Grid.Row="3" Grid.Column="2" Width="300" Margin="20,5" Text="C:\\A_SampleFolder\trafficjam_after.jpg" />
+        <Button x:Name="btnFileDialog2" Grid.Row="3" Grid.Column="3" Margin="5,5"
+                Content="Browse" Click="btnFileDialog2_Click"/>
+        
         <Button x:Name="btnStart" Grid.Row="4" Grid.Column="2" Height="40" Width="400"
                 Content="Run Me" Click="BtnStart_Click"/>
 
         <TextBlock x:Name="lblMessage" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,5"/>
 
-        <Image x:Name="imgBefore" Grid.Row="6" Grid.Column="1" Source="C:\\A_SampleFolder\\trafficjam_before.jpg" MaxWidth="300"/>
+        <!--<Image x:Name="imgBefore" Grid.Row="6" Grid.Column="1" Source="C:\\A_SampleFolder\\trafficjam_before.jpg" MaxWidth="300"/>
         <TextBlock Grid.Row="7" Grid.Column="1" Text="BEFORE" HorizontalAlignment="Center"/>
 
         <Image x:Name="imgAfter" Grid.Row="6" Grid.Column="2" Source="C:\\A_SampleFolder\\trafficjam_after.jpg" MaxWidth="300"/>
-        <TextBlock Grid.Row="7" Grid.Column="2" Text="AFTER" HorizontalAlignment="Center"/>
+        <TextBlock Grid.Row="7" Grid.Column="2" Text="AFTER" HorizontalAlignment="Center"/>-->
     </Grid>
 </Controls:MetroWindow>
