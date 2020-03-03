@@ -64,6 +64,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -159,6 +160,14 @@
     <ProjectReference Include="..\RPS.Images\RPS.Images.csproj">
       <Project>{15a20c6f-09e7-4a24-9566-fe756e8fa827}</Project>
       <Name>RPS.Images</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RPS.Library.API\RPS.Library.API.csproj">
+      <Project>{32d5893c-dd76-4992-9584-95201a17ac06}</Project>
+      <Name>RPS.Library.API</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RPS.Models\RPS.Models.csproj">
+      <Project>{b0297bd4-295a-4d2b-ba25-430c99961839}</Project>
+      <Name>RPS.Models</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

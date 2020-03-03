@@ -17,6 +17,8 @@ using RPS.Images;
 //for select directory dialog
 using System.Windows.Forms;
 using System.IO;
+using RPS.Library.API.Utility;
+using RPS.Models;
 
 namespace RPS.Photoshop
 {
@@ -33,9 +35,27 @@ namespace RPS.Photoshop
         }
 
         private void BtnStart_Click(object sender, RoutedEventArgs e)
-        {  
-            lblMessage.Text = "Button is clicked";
-            Test();
+        {
+            try
+            {
+                lblMessage.Text = "Button is clicked";
+                //Test();
+                RunProgram();
+                //TestFace();
+                lblMessage.Text = "All Tasks completed.";
+                lblMessage.Foreground = Brushes.Green;
+            }
+            catch (Exception ex)
+            {
+                lblMessage.Text = ex.ToString();
+                lblMessage.Foreground = Brushes.Red;
+            }            
+        }
+
+        private void TestFace()
+        {
+            string testInput = txtSource.Text + "\\" + "trafficjam3.jpg";
+            FaceDetection.Start(testInput);
         }
 
         private void Test()
@@ -51,12 +71,63 @@ namespace RPS.Photoshop
                 System.Windows.MessageBox.Show(ex.Message);
                 lblMessage.Text = ex.ToString();
             }
-            
+
+        }
+
+        private void RunProgram()
+        {
+            //System.Windows.MessageBox.Show("Hello World");
+            if (!IsSourceTargetDifferent())
+            {
+                lblMessage.Text = "ERROR: Source and Target cannot be the same";
+                lblMessage.Foreground = Brushes.Red;
+            }
+            else
+            {
+                lblMessage.Text = string.Empty;
+                lblMessage.Foreground = Brushes.Green;
+
+                string[] files = Directory.GetFiles(txtSource.Text);
+                if (files.Length > 0)
+                {
+                    try
+                    {
+                        //TODO: Loop all files
+                        foreach (string filePath in files)
+                        {
+                            FileInfo info = new FileInfo(filePath);
+                            List<RectangleModel> rectangles = new List<RectangleModel>();
+                            //TODO: check for Face
+                            List<RectangleModel> rect_F = 
+                                FaceDetection.Start(info.FullName);
+                            //check for Vehicle Plate
+                            List<RectangleModel> rect_V =
+                                VehicleDetection.Start(info.FullName);
+                            if(rect_V.Count > 0)
+                            {
+                                rectangles.AddRange(rect_V);
+                            }
+                            if(rect_F.Count > 0)
+                            {
+                                rectangles.AddRange(rect_F);
+                            }
+
+                            string outputfolder = txtTarget.Text + "\\";
+                            ImageProcessor.Start(info.FullName, rectangles, outputfolder + info.Name);
+                            lblMessage.Text = string.Format("Creating {0} SUCCESS", info.Name);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+                }
+            }
         }
 
         private void btnStart_Click_1(object sender, RoutedEventArgs e)
         {
-            System.Windows.MessageBox.Show("Hello World");
+
         }
 
         private void btnFileDialog2_Click(object sender, RoutedEventArgs e)
@@ -68,7 +139,6 @@ namespace RPS.Photoshop
                 if (!string.IsNullOrWhiteSpace(fbd.SelectedPath))
                 {
                     txtTarget.Text = fbd.SelectedPath;
-                    CheckIfSourceAndTargetIsSame();
                 }
             }
         }
@@ -81,25 +151,20 @@ namespace RPS.Photoshop
 
                 if (!string.IsNullOrWhiteSpace(fbd.SelectedPath))
                 {
-                    string[] files = Directory.GetFiles(fbd.SelectedPath);
-                    System.Windows.Forms.MessageBox.Show("Files found: " + files.Length.ToString(), "Message");
                     txtSource.Text = fbd.SelectedPath;
-                    CheckIfSourceAndTargetIsSame();
                 }
             }
         }
 
-        private void CheckIfSourceAndTargetIsSame()
+        private Boolean IsSourceTargetDifferent()
         {
-            if(txtSource.Text == txtTarget.Text)
+            if (txtSource.Text == txtTarget.Text)
             {
-                lblMessage.Text = "Source and Target cannot be the same";
-                lblMessage.Foreground = Brushes.Red;
+                return false;
             }
             else
             {
-                lblMessage.Text = string.Empty;
-                lblMessage.Foreground = Brushes.Black;
+                return true;
             }
 
         }
