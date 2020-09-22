@@ -13,12 +13,13 @@ namespace RPS.Library.API.Utility
 {
     public class VehicleDetection
     {
-        
+        LogHelper lg = new LogHelper();
         /// <summary>
         /// main entrypoint for Vehicle Plate
         /// </summary>
         public static List<RectangleModel> Start(string imageFilePath)
-        {  
+        {
+            
             if (!File.Exists(imageFilePath))
             {
                 throw new Exception(string.Format("File {0} not found.",imageFilePath));

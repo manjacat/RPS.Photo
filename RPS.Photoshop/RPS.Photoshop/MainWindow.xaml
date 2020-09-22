@@ -45,12 +45,12 @@
         <TextBlock Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="5" TextAlignment="Center" Text="Khairil App - Vehicle Plate Auto Cover"></TextBlock>
 
         <TextBlock Grid.Row="2" Grid.Column="1" Text="Source Folder: "/>
-        <TextBox x:Name="txtSource" Grid.Row="2" Grid.Column="2" Width="300" Margin="20,5" Text="C:\A_SampleFolder\Testfolder"/>
+        <TextBox x:Name="txtSource" Grid.Row="2" Grid.Column="2" Width="300" Margin="20,5" Text="C:\a_sample_blur2\topcon_blur_sample"/>
         <Button x:Name="btnFileDialog1" Grid.Row="2" Grid.Column="3" Margin="5,5"
                 Content="Browse" Click="btnFileDialog1_Click"/>
 
         <TextBlock Grid.Row="3" Grid.Column="1"  Text="Target Folder: "/>
-        <TextBox x:Name="txtTarget" Grid.Row="3" Grid.Column="2" Width="300" Margin="20,5" Text="C:\A_SampleFolder\Output" />
+        <TextBox x:Name="txtTarget" Grid.Row="3" Grid.Column="2" Width="300" Margin="20,5" Text="C:\a_sample_blur2\topcon_blur_sample\output" />
         <Button x:Name="btnFileDialog2" Grid.Row="3" Grid.Column="3" Margin="5,5"
                 Content="Browse" Click="btnFileDialog2_Click"/>
         

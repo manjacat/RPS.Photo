@@ -27,10 +27,14 @@ namespace RPS.Photoshop
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
+        LogHelper lg = new LogHelper();
         public MainWindow()
         {
+            //test text log
+            //LogHelper.ErrorLog("Application Started");
             InitializeComponent();
-            lblMessage.Text = "Successfully run with no errors";
+            lblMessage.Text = "Program has started.";
+            //lblMessage.Text = "Successfully run with no errors";
             //MessageBox.Show("Hello");
         }
 
@@ -90,16 +94,19 @@ namespace RPS.Photoshop
                 string[] files = Directory.GetFiles(txtSource.Text);
                 if (files.Length > 0)
                 {
+                    lblMessage.Text = string.Format("total file(s) found: {0}", files.Length.ToString());
                     try
                     {
                         //TODO: Loop all files
+                        int counter = 0;
                         foreach (string filePath in files)
                         {
+                            counter++;
                             FileInfo info = new FileInfo(filePath);
                             List<RectangleModel> rectangles = new List<RectangleModel>();
-                            //TODO: check for Face
+                            //check for Face                            
                             List<RectangleModel> rect_F = 
-                                FaceDetection.Start(info.FullName);
+                               FaceDetection.Start(info.FullName);
                             //check for Vehicle Plate
                             List<RectangleModel> rect_V =
                                 VehicleDetection.Start(info.FullName);
@@ -114,12 +121,17 @@ namespace RPS.Photoshop
 
                             string outputfolder = txtTarget.Text + "\\";
                             ImageProcessor.Start(info.FullName, rectangles, outputfolder + info.Name);
-                            lblMessage.Text = string.Format("Creating {0} SUCCESS", info.Name);
+                            string displayMessage = string.Format("completed task {0} out of {1}", counter.ToString(), files.Length.ToString());
+                            lblMessage.Text = displayMessage;
+                            //trace
+                            LogHelper.TraceLog(displayMessage);
                         }
                     }
                     catch (Exception ex)
-                    {
-                        throw ex;
+                    {                        
+                        LogHelper.ErrorLog(ex.ToString());
+                        lblMessage.Text = string.Format("the program has been interrupted due to error. please check the error logs.");
+                        //throw ex;
                     }
                 }
             }
