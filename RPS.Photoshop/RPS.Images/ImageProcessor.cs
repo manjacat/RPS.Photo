@@ -14,6 +14,10 @@ namespace RPS.Images
     {
         //public static string outputFileName = "trafficjam_008.jpg";
 
+        // this class will get all the rectangles from Face/License Plate
+        // and overlay them to the original image to redact the face and license plate
+        // it will then save the new image to output folder with the same filename
+
         public static void Start(
             string inputFileName,
             List<RectangleModel> rectangles,
@@ -61,17 +65,22 @@ namespace RPS.Images
                 SolidBrush redBrush = new SolidBrush(Color.Red);
                 SolidBrush blackbrush = new SolidBrush(Color.Black);
                 Brush brush1 = new SolidBrush(Color.FromArgb(230, Color.Black));
+
+                //tukar keler grey (ARGB maksud Alpha + RGB)
+                //nak tukar opacity, pilih nombor 1 - 255 (aku letak 230)
+                Brush greyBrush = new SolidBrush(Color.FromArgb(230, Color.Gray));
+
                 //gr.FillRectangles(brush1, rects.ToArray());
                 foreach (var r in rectangles)
                 {
                     Rectangle rect1 = ConvertToRectangle(r);
                     if (r.ObjectType == ObjectTypeEnum.Face)
                     {   
-                        gr.FillEllipse(redBrush, rect1);
+                        gr.FillEllipse(greyBrush, rect1);
                     }
                     else if(r.ObjectType == ObjectTypeEnum.Licenseplate)
                     {
-                        gr.FillRectangle(redBrush, rect1);
+                        gr.FillRectangle(greyBrush, rect1);
                     }
                 }
             }

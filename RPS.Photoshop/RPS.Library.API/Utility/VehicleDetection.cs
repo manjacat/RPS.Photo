@@ -13,6 +13,10 @@ namespace RPS.Library.API.Utility
 {
     public class VehicleDetection
     {
+        // this is the class used to call the License Plate API
+        // read the json output
+        // and convert them to List of rectangles 
+
         LogHelper lg = new LogHelper();
         /// <summary>
         /// main entrypoint for Vehicle Plate

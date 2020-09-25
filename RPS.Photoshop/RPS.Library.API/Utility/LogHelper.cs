@@ -7,6 +7,7 @@ using NLog;
 
 namespace RPS.Library.API.Utility
 {
+    // This is the utility class used to generate log file in the /log/ folder    
     public class LogHelper
     {
         protected static Logger logger = LogManager.GetCurrentClassLogger();

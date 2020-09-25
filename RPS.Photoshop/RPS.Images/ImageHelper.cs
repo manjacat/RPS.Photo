@@ -11,6 +11,7 @@ namespace RPS.Images
 {
     public class ImageHelper
     {
+        // obsolete class. only used during early phase for testing
         public static string rootfolder = "C:\\A_SampleFolder\\";
         public static string inputFileName = "trafficjam_before.jpg";
         public static string outputFileName = "trafficjam_after.jpg";
