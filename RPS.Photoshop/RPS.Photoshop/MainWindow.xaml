@@ -42,7 +42,7 @@
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="5" TextAlignment="Center" Text="Khairil App - Vehicle Plate Auto Cover"></TextBlock>
+        <TextBlock Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="5" TextAlignment="Center" Text="Vehicle Plate Auto Cover"></TextBlock>
 
         <TextBlock Grid.Row="2" Grid.Column="1" Text="Source Folder: "/>
         <TextBox x:Name="txtSource" Grid.Row="2" Grid.Column="2" Width="300" Margin="20,5" Text="C:\a_sample_blur2\topcon_blur_sample"/>
@@ -57,7 +57,10 @@
         <Button x:Name="btnStart" Grid.Row="4" Grid.Column="2" Height="40" Width="400"
                 Content="Run Me" Click="BtnStart_Click"/>
 
-        <TextBlock x:Name="lblMessage" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="4" Margin="0,5"/>
+        <TextBlock x:Name="lblMessage" Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="4" Margin="0,5" Text="Test"></TextBlock>
+
+        <ProgressBar x:Name="pbProgress" Value="100" Minimum="0" Maximum="100" Height="20" Width="200" Grid.Row="6" 
+                     Grid.Column="2" Margin="0,5" Visibility="Hidden"/>
 
         <!--<Image x:Name="imgBefore" Grid.Row="6" Grid.Column="1" Source="C:\\A_SampleFolder\\trafficjam_before.jpg" MaxWidth="300"/>
         <TextBlock Grid.Row="7" Grid.Column="1" Text="BEFORE" HorizontalAlignment="Center"/>

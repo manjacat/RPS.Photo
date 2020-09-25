@@ -19,6 +19,10 @@ using System.Windows.Forms;
 using System.IO;
 using RPS.Library.API.Utility;
 using RPS.Models;
+using System.Threading;
+using System.Windows.Media.TextFormatting;
+using System.ComponentModel;
+using NLog.Targets;
 
 namespace RPS.Photoshop
 {
@@ -28,14 +32,92 @@ namespace RPS.Photoshop
     public partial class MainWindow : MetroWindow
     {
         LogHelper lg = new LogHelper();
+        //TODO bg Worker
+        BackgroundWorker worker = new BackgroundWorker();
+
+        // masukkan textbox value dlm property sebab nanti thread tak boleh baca
+        public string prop_textSource { get; set; }
+        public string prop_targetSource { get; set; }
+
+        public int total_input { get; set; }
+        public int total_output { get; set; }
+
+        // for testing
+        public int loop_end { get; set; }
+
         public MainWindow()
         {
             //test text log
             //LogHelper.ErrorLog("Application Started");
             InitializeComponent();
-            lblMessage.Text = "Program has started.";
-            //lblMessage.Text = "Successfully run with no errors";
-            //MessageBox.Show("Hello");
+            //activate bgworker
+            AdditionalInitialization();
+        }
+
+        public void AdditionalInitialization()
+        {
+            worker.DoWork += worker_DoWork;
+            worker.RunWorkerCompleted += worker_RunWorkerCompleted;
+            worker.WorkerReportsProgress = true;
+            worker.ProgressChanged += worker_ProgressChanged;
+        }
+
+        private void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            //TODO: update progress
+            pbProgress.Value = e.ProgressPercentage;
+            string msgUpdate = "Progress Changed: " + e.ProgressPercentage.ToString() + "/100";
+            Console.WriteLine(msgUpdate);
+            lblMessage.Text = msgUpdate;
+        }
+
+        // masa do work ni tak boleh panggil object dari WPF i.e. Thread lain
+        private void worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            // run all background tasks here
+            string[] files = Directory.GetFiles(prop_textSource);
+            total_input = files.Length;
+
+            for(int i = 0; i < total_input; i++)
+            {
+                try
+                {
+                    string filePath = files[i];
+                    FileInfo info = new FileInfo(filePath);
+                    List<RectangleModel> rectangles = new List<RectangleModel>();
+                    //check for Face                            
+                    List<RectangleModel> rect_F = FaceDetection.Start(info.FullName);
+                    //List<RectangleModel> rect_F = new List<RectangleModel>();
+                    //check for Vehicle Plate
+                    List<RectangleModel> rect_V = VehicleDetection.Start(info.FullName);
+                    if (rect_V.Count > 0)
+                    {
+                        rectangles.AddRange(rect_V);
+                    }
+                    if (rect_F.Count > 0)
+                    {
+                        rectangles.AddRange(rect_F);
+                    }
+
+                    string outputfolder = prop_targetSource + "\\";
+                    ImageProcessor.Start(info.FullName, rectangles, outputfolder + info.Name);
+                    int progressPercentage = Convert.ToInt32(((double)i / total_input) * 100);
+                    (sender as BackgroundWorker).ReportProgress(progressPercentage);
+                }
+                catch(Exception ex)
+                {
+                    LogHelper.ErrorLog(ex.ToString());
+                }                
+            }
+        }
+
+        private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            //update ui once worker completes work
+            Console.WriteLine("Job Completed");
+            lblMessage.Text = "Job completed. 100/100";
+            pbProgress.Visibility = Visibility.Hidden;
+            btnStart.IsEnabled = true;
         }
 
         private void BtnStart_Click(object sender, RoutedEventArgs e)
@@ -43,19 +125,41 @@ namespace RPS.Photoshop
             try
             {
                 lblMessage.Text = "Button is clicked";
-                //Test();
-                RunProgram();
-                //TestFace();
-                lblMessage.Text = "All Tasks completed.";
+                
+
+                if (!IsSourceTargetDifferent())
+                {
+                    lblMessage.Text = "ERROR: Source and Target cannot be the same";
+                    lblMessage.Foreground = Brushes.Red;
+                }
+                else
+                {
+                    //assign value to prop_textSource/targetSource
+                    prop_textSource = txtSource.Text;
+                    prop_targetSource = txtTarget.Text;
+                    //UI changes
+                    lblMessage.Text = string.Empty;
+                    lblMessage.Foreground = Brushes.Green;
+                    btnStart.IsEnabled = false;
+                    pbProgress.Visibility = Visibility.Visible;
+                    pbProgress.Value = 0;
+                    pbProgress.Maximum = 100;
+                    //start work
+                    worker.RunWorkerAsync();                    
+                }                
+
+                //lblMessage.Text = "All Tasks completed.";
                 lblMessage.Foreground = Brushes.Green;
             }
             catch (Exception ex)
             {
-                lblMessage.Text = ex.ToString();
+                LogHelper.ErrorLog(ex.ToString());
+                lblMessage.Text = string.Format("the program has been interrupted due to error. please check the error logs.");
                 lblMessage.Foreground = Brushes.Red;
             }            
         }
 
+        #region Khairil Testing Stuff
         private void TestFace()
         {
             string testInput = txtSource.Text + "\\" + "trafficjam3.jpg";
@@ -77,71 +181,81 @@ namespace RPS.Photoshop
             }
 
         }
+        
+
+        private void Temp_AlihKejap()
+        {
+            
+
+            //Test();
+            //RunProgram();
+            //TestFace();
+            
+
+            string[] files_input = Directory.GetFiles(prop_textSource);
+            int total_input = files_input.Length;
+            string[] files_output = Directory.GetFiles(prop_targetSource);
+            total_output = files_output.Length;
+            while (total_input > total_output)
+            {
+                lblMessage.Text = string.Format("Updating Task {0} out of {1}", total_input.ToString(), total_output.ToString());
+                files_output = Directory.GetFiles(prop_targetSource);
+                total_output = files_output.Length;
+                Console.WriteLine("total output is " + total_output);
+            }
+            lblMessage.Text = "Task Completed";
+        }
 
         private void RunProgram()
         {
-            //System.Windows.MessageBox.Show("Hello World");
-            if (!IsSourceTargetDifferent())
-            {
-                lblMessage.Text = "ERROR: Source and Target cannot be the same";
-                lblMessage.Foreground = Brushes.Red;
-            }
-            else
-            {
-                lblMessage.Text = string.Empty;
-                lblMessage.Foreground = Brushes.Green;
+            Console.WriteLine("Thread has started.");
 
-                string[] files = Directory.GetFiles(txtSource.Text);
-                if (files.Length > 0)
+
+            string[] files = Directory.GetFiles(prop_textSource);
+
+            if (files.Length > 0)
+            {
+                Console.WriteLine(string.Format("total file(s) found: {0}", files.Length.ToString()));
+                try
                 {
-                    lblMessage.Text = string.Format("total file(s) found: {0}", files.Length.ToString());
-                    try
+                    //TODO: Loop all files
+                    int counter = 0;
+                    foreach (string filePath in files)
                     {
-                        //TODO: Loop all files
-                        int counter = 0;
-                        foreach (string filePath in files)
+                        counter++;
+                        FileInfo info = new FileInfo(filePath);
+                        List<RectangleModel> rectangles = new List<RectangleModel>();
+                        //check for Face                            
+                        //List<RectangleModel> rect_F = FaceDetection.Start(info.FullName);
+                        List<RectangleModel> rect_F = new List<RectangleModel>();
+                        //check for Vehicle Plate
+                        List<RectangleModel> rect_V = VehicleDetection.Start(info.FullName);
+                        if (rect_V.Count > 0)
                         {
-                            counter++;
-                            FileInfo info = new FileInfo(filePath);
-                            List<RectangleModel> rectangles = new List<RectangleModel>();
-                            //check for Face                            
-                            List<RectangleModel> rect_F = 
-                               FaceDetection.Start(info.FullName);
-                            //check for Vehicle Plate
-                            List<RectangleModel> rect_V =
-                                VehicleDetection.Start(info.FullName);
-                            if(rect_V.Count > 0)
-                            {
-                                rectangles.AddRange(rect_V);
-                            }
-                            if(rect_F.Count > 0)
-                            {
-                                rectangles.AddRange(rect_F);
-                            }
-
-                            string outputfolder = txtTarget.Text + "\\";
-                            ImageProcessor.Start(info.FullName, rectangles, outputfolder + info.Name);
-                            string displayMessage = string.Format("completed task {0} out of {1}", counter.ToString(), files.Length.ToString());
-                            lblMessage.Text = displayMessage;
-                            //trace
-                            LogHelper.TraceLog(displayMessage);
+                            rectangles.AddRange(rect_V);
                         }
+                        if (rect_F.Count > 0)
+                        {
+                            rectangles.AddRange(rect_F);
+                        }
+
+                        string outputfolder =  prop_targetSource + "\\";
+                        ImageProcessor.Start(info.FullName, rectangles, outputfolder + info.Name);
+                        string displayMessage = string.Format("completed task {0} out of {1}", counter.ToString(), files.Length.ToString());
+                        //trace
+                        LogHelper.TraceLog(displayMessage);
                     }
-                    catch (Exception ex)
-                    {                        
-                        LogHelper.ErrorLog(ex.ToString());
-                        lblMessage.Text = string.Format("the program has been interrupted due to error. please check the error logs.");
-                        //throw ex;
-                    }
+                }
+                catch (Exception ex)
+                {   
+                    throw ex;
                 }
             }
         }
 
-        private void btnStart_Click_1(object sender, RoutedEventArgs e)
-        {
+        #endregion
 
-        }
-
+        //set the target folder
         private void btnFileDialog2_Click(object sender, RoutedEventArgs e)
         {
             using (var fbd = new FolderBrowserDialog())
@@ -155,6 +269,7 @@ namespace RPS.Photoshop
             }
         }
 
+        // set the source folder
         private void btnFileDialog1_Click(object sender, RoutedEventArgs e)
         {
             using (var fbd = new FolderBrowserDialog())
@@ -168,6 +283,7 @@ namespace RPS.Photoshop
             }
         }
 
+        // check if source folder and target folder is different
         private Boolean IsSourceTargetDifferent()
         {
             if (txtSource.Text == txtTarget.Text)
