@@ -1,4 +1,5 @@
-﻿using RPS.Models;
+﻿using RPS.Library.API.Utility;
+using RPS.Models;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -70,7 +71,17 @@ namespace RPS.Images
                 //nak tukar opacity, pilih nombor 1 - 255 (aku letak 230)
                 Brush greyBrush = new SolidBrush(Color.FromArgb(230, Color.Gray));
 
-                //gr.FillRectangles(brush1, rects.ToArray());
+                //TODO: use blur to cover faces/licence plate                
+                GaussianBlur blur = new GaussianBlur(img as Bitmap);
+                var result = blur.Process(30);
+                // plan 1: 
+                //(1) blur the whole image as image2.jpg
+                //(2) get coordinates of face/license
+                //(3) replace coordinates
+                //plan 2:
+                // generate a sample blur mask
+                // and cover the face/license
+
                 foreach (var r in rectangles)
                 {
                     Rectangle rect1 = ConvertToRectangle(r);
