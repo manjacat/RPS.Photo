@@ -97,7 +97,7 @@ namespace RPS.Library.API.Utility
         {
             List<RectangleModel> rectangles = new List<RectangleModel>();
 
-            //Loop each children (if more than 1 license plate)
+            //Loop each children (if more than 1 face)
             foreach (JObject obj in objects.Children())
             {
                 try

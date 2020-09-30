@@ -67,7 +67,7 @@ namespace RPS.Photoshop
             //TODO: update progress
             pbProgress.Value = e.ProgressPercentage;
             string msgUpdate = "Progress Changed: " + e.ProgressPercentage.ToString() + "/100";
-            Console.WriteLine(msgUpdate);
+            LogHelper.TraceLog(msgUpdate);
             lblMessage.Text = msgUpdate;
         }
 
@@ -78,18 +78,23 @@ namespace RPS.Photoshop
             string[] files = Directory.GetFiles(prop_textSource);
             total_input = files.Length;
 
-            for(int i = 0; i < total_input; i++)
+            //initiate report progress at 0%
+            (sender as BackgroundWorker).ReportProgress(0);
+
+            for (int i = 0; i < total_input; i++)
             {
                 try
                 {
                     string filePath = files[i];
                     FileInfo info = new FileInfo(filePath);
                     List<RectangleModel> rectangles = new List<RectangleModel>();
+                    //check for Vehicle Plate
+                    List<RectangleModel> rect_V = VehicleDetection.Start(info.FullName);
+
                     //check for Face                            
                     List<RectangleModel> rect_F = FaceDetection.Start(info.FullName);
                     //List<RectangleModel> rect_F = new List<RectangleModel>();
-                    //check for Vehicle Plate
-                    List<RectangleModel> rect_V = VehicleDetection.Start(info.FullName);
+                    
                     if (rect_V.Count > 0)
                     {
                         rectangles.AddRange(rect_V);
@@ -114,8 +119,9 @@ namespace RPS.Photoshop
         private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             //update ui once worker completes work
-            Console.WriteLine("Job Completed");
-            lblMessage.Text = "Job completed. 100/100";
+            string jobCompleteMsg = "Job completed. 100/100.";
+            LogHelper.TraceLog(jobCompleteMsg);
+            lblMessage.Text = jobCompleteMsg;
             pbProgress.Visibility = Visibility.Hidden;
             btnStart.IsEnabled = true;
         }
@@ -124,7 +130,7 @@ namespace RPS.Photoshop
         {
             try
             {
-                lblMessage.Text = "Button is clicked";
+                //lblMessage.Text = "Button is clicked";
                 
 
                 if (!IsSourceTargetDifferent())
@@ -139,7 +145,7 @@ namespace RPS.Photoshop
                     prop_targetSource = txtTarget.Text;
                     //UI changes
                     lblMessage.Text = string.Empty;
-                    lblMessage.Foreground = Brushes.Green;
+                    lblMessage.Foreground = Brushes.Blue;
                     btnStart.IsEnabled = false;
                     pbProgress.Visibility = Visibility.Visible;
                     pbProgress.Value = 0;
@@ -148,13 +154,12 @@ namespace RPS.Photoshop
                     worker.RunWorkerAsync();                    
                 }                
 
-                //lblMessage.Text = "All Tasks completed.";
                 lblMessage.Foreground = Brushes.Green;
             }
             catch (Exception ex)
             {
                 LogHelper.ErrorLog(ex.ToString());
-                lblMessage.Text = string.Format("the program has been interrupted due to error. please check the error logs.");
+                lblMessage.Text = string.Format("the program has been interrupted. Please check the error logs.");
                 lblMessage.Foreground = Brushes.Red;
             }            
         }

@@ -81,6 +81,7 @@ namespace RPS.Images
                     else if(r.ObjectType == ObjectTypeEnum.Licenseplate)
                     {
                         gr.FillRectangle(greyBrush, rect1);
+                        
                     }
                 }
             }

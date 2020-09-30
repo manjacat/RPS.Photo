@@ -34,16 +34,6 @@ namespace RPS.Library.API.Utility
             }
         }
 
-        //TODO
-        //public static void TestDeserializeJson()
-        //{
-        //    Console.WriteLine("Start!");
-        //    string jsonpath = "C:\\A_SampleFolder\\licenceplatejson.txt";
-        //    string jsonString = File.ReadAllText(jsonpath);
-        //    //List<ObjectTypeModel> results = (List<ObjectTypeModel>)JsonConvert.DeserializeObject<ObjectTypeModel>(jsonpath);
-        //    Console.WriteLine("success!");
-        //}
-
         private static List<RectangleModel> RunFunction(string imageFilePath)
         {            
             string imgBase64String = Common.GetBase64StringForImage(imageFilePath);
@@ -114,37 +104,35 @@ namespace RPS.Library.API.Utility
             {
                 try
                 {
-                    //Console.WriteLine("Object :");
-                    //string oType = obj["objectType"].Value<string>();
-                    ////string type = "something"; 
-                    //if (oType != null)
-                    //{
-                    //    Console.WriteLine(oType);
-                    //}
-                    JObject licencePlateAnnotation = (JObject)obj["licenseplateAnnotation"];
-                    JObject bounding = (JObject)licencePlateAnnotation["bounding"];
-                    JArray vertices = (JArray)bounding["vertices"];
-                    List<int> xcoord = new List<int>();
-                    List<int> ycoord = new List<int>();
-
-                    //loop each coordinate (x,y)
-                    foreach (JObject vert in vertices.Children())
+                    JObject vehicleAnnotation = (JObject)obj["vehicleAnnotation"];
+                    JObject licencePlate = (JObject)vehicleAnnotation["licenseplate"];
+                    if (licencePlate != null)
                     {
-                        string x = vert["x"].Value<string>();
-                        string y = vert["y"].Value<string>();
-                        xcoord.Add(Convert.ToInt32(x));
-                        ycoord.Add(Convert.ToInt32(y));
-                    }
+                        JObject bounding = (JObject)licencePlate["bounding"];
+                    
+                        JArray vertices = (JArray)bounding["vertices"];
+                        List<int> xcoord = new List<int>();
+                        List<int> ycoord = new List<int>();
 
-                    RectangleModel rect1 = new RectangleModel
-                    {
-                        ObjectType = ObjectTypeEnum.Licenseplate,
-                        x = xcoord.Min(),
-                        y = ycoord.Min(),
-                        height = ycoord.Max() - ycoord.Min(),
-                        width = xcoord.Max() - xcoord.Min()
-                    };
-                    rectangles.Add(rect1);
+                        //loop each coordinate (x,y)
+                        foreach (JObject vert in vertices.Children())
+                        {
+                            string x = vert["x"].Value<string>();
+                            string y = vert["y"].Value<string>();
+                            xcoord.Add(Convert.ToInt32(x));
+                            ycoord.Add(Convert.ToInt32(y));
+                        }
+
+                        RectangleModel rect1 = new RectangleModel
+                        {
+                            ObjectType = ObjectTypeEnum.Licenseplate,
+                            x = xcoord.Min(),
+                            y = ycoord.Min(),
+                            height = ycoord.Max() - ycoord.Min(),
+                            width = xcoord.Max() - xcoord.Min()
+                        };
+                        rectangles.Add(rect1);
+                    }                    
                 }
                 catch (Exception ex)
                 {
