@@ -55,6 +55,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\Common.cs" />
     <Compile Include="Utility\FaceDetection.cs" />
+    <Compile Include="Utility\GaussianBlur.cs" />
     <Compile Include="Utility\LogHelper.cs" />
     <Compile Include="Utility\VehicleDetection.cs" />
   </ItemGroup>
