@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace RPS.Library.API.Utility
 {
@@ -49,9 +52,11 @@ namespace RPS.Library.API.Utility
         /// </summary>
         /// <param name="imgPath">Full path where image is located.</param>
         /// <returns></returns>
-        public static string GetBase64StringForImage(string imgPath)
+        public static string GetBase64StringForImage(Bitmap img)
         {
-            byte[] imageBytes = System.IO.File.ReadAllBytes(imgPath);
+            MemoryStream ms = new MemoryStream();
+            img.Save(ms, ImageFormat.Jpeg);
+            byte[] imageBytes = ms.ToArray();
             string base64String = Convert.ToBase64String(imageBytes);
             return base64String;
         }

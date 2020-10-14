@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace RPS.Library.API.Utility
 {
@@ -20,33 +21,14 @@ namespace RPS.Library.API.Utility
         /// <summary>
         /// main entrypoint for Vehicle Plate
         /// </summary>
-        public static List<RectangleModel> Start(string imageFilePath)
+        public static List<RectangleModel> Start(Bitmap imageFilePath)
         {
-            if (!File.Exists(imageFilePath))
-            {
-                throw new Exception(string.Format("File {0} not found.", imageFilePath));
-            }
-            else
-            {
-                return RunFunction(imageFilePath);
-            }
+                return CallApi(imageFilePath);
         }
 
-        private static List<RectangleModel> RunFunction(string imageFilePath)
-        {
-            string imgBase64String = Common.GetBase64StringForImage(imageFilePath);
-            Dictionary<string, string> dict = new Dictionary<string, string>();
-            dict.Add("image", imgBase64String);
-            string json = JsonConvert.SerializeObject(dict, Formatting.Indented);
-            byte[] body = Encoding.UTF8.GetBytes(json);
-
-            return CallApi(imageFilePath);
-        }
-
-        private static List<RectangleModel> CallApi(string imageFilePath)
+        private static List<RectangleModel> CallApi(Bitmap imageFilePath)
         {
             List<RectangleModel> rectangles = new List<RectangleModel>();
-
             string imgBase64String = Common.GetBase64StringForImage(imageFilePath);
             Dictionary<string, string> dict = new Dictionary<string, string>();
             dict.Add("image", imgBase64String);
